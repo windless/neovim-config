@@ -3,52 +3,77 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'ervandew/supertab'
 
-Plug 'ybian/smartim'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
-Plug 'padde/jump.vim'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" theme
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'w0rp/ale'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug '/usr/local/opt/fzf'
-Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-surround'
-Plug 'jiangmiao/auto-pairs'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'airblade/vim-gitgutter'
+Plug 'ryanoasis/vim-devicons'
+
+" language
+Plug 'dag/vim-fish'
+
 Plug 'pangloss/vim-javascript'
-Plug 'vim-scripts/tComment'
-Plug 'kassio/neoterm'
-Plug 'vimlab/split-term.vim'
-Plug 'jlanzarotta/bufexplorer'
-Plug 'mattn/emmet-vim'
-Plug 'qpkorr/vim-bufkill'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'ternjs/tern_for_vim'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'carlitux/deoplete-ternjs'
+Plug 'dunckr/js_alternate.vim'
+
 Plug 'jparise/vim-graphql'
 Plug 'mxw/vim-jsx'
-Plug 'sbdchd/neoformat'
-Plug 'vim-scripts/Rename2'
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-cucumber'
 Plug 'rust-lang/rust.vim'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'sebastianmarkow/deoplete-rust'
-Plug 'tpope/vim-fugitive'
-Plug 'Asheq/close-buffers.vim'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'vim-scripts/indentpython.vim'
+
+" Plug 'kamykn/spelunker.vim'
+
+" 功能
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
+Plug 'andrep/vimacs'
+
+Plug 'padde/jump.vim'
+Plug 'w0rp/ale'
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+
+" edit
+Plug 'tpope/vim-surround'
+Plug 'jiangmiao/auto-pairs'
+Plug 'vim-scripts/tComment'
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-eunuch'
+Plug 'mattn/emmet-vim'
+Plug 'SirVer/ultisnips'
+Plug 'alvan/vim-closetag'
+
+" buffer
+Plug 'jlanzarotta/bufexplorer'
+Plug 'vimlab/split-term.vim'
+Plug 'qpkorr/vim-bufkill'
+Plug 'Asheq/close-buffers.vim'
+Plug 'chrisbra/NrrwRgn'
+
+Plug 'tpope/vim-fugitive'
+
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
 Plug 'ncm2/ncm2-jedi'
 
-Plug 'SirVer/ultisnips'
-Plug 'ternjs/tern_for_vim'
-Plug 'carlitux/deoplete-ternjs'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'alvan/vim-closetag'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'kassio/neoterm'
+Plug 'sbdchd/neoformat'
+
+Plug 'tpope/vim-unimpaired'
 
 call plug#end()
 
@@ -74,6 +99,9 @@ set foldmethod=indent
 set foldlevelstart=99
 set noswapfile
 au FocusGained * :checktime
+set encoding=UTF-8
+set guifont=Hack\ Nerd\ Font\ h11
+set colorcolumn=120
 " :au FocusLost * silent! wa
 
 au BufNewFile,BufRead *.art set filetype=html
@@ -96,6 +124,12 @@ let g:airline#extensions#tabline#enabled = 1
 let g:ale_linters = {
 \   'javascript': ['eslint', 'tsserver'],
 \}
+let g:ale_fixers = {
+  \'javascript': [
+    \'eslint',
+  \],
+\}
+let g:ale_sign_column_always = 1
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
 
 let g:user_emmet_leader_key='<C-E>'
@@ -131,10 +165,19 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:session_autosave='no'
 let g:session_autoload='no'
 
+nmap <silent> <Leader>T :Term<CR>
+nmap <silent> <Leader>t :VTerm<CR>
+
 nnoremap <Leader>ff :FZF<CR>
 nnoremap <Leader>fl :Lines<CR>
-nnoremap <Leader>fk :Rg<CR>
+vmap <silent> <Leader>fr y:Rg <C-r>"<CR>
+nmap <silent> <Leader>fr yiw:Rg <C-r>"<CR>
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+
+nmap <silent> <Leader>bb :NERDTreeToggle<CR>
+nmap <silent> <Leader>bf :NERDTreeToggle<CR><C-w>l:NERDTreeFind<CR>
+nmap <silent> <Leader>bc :CloseOtherBuffers<CR>
+nmap <Leader>br :e %:h
 
 nmap <Leader>/ :TComment<CR>
 vmap <Leader>/ :TComment<CR>
@@ -146,16 +189,14 @@ nnoremap <leader>yy "+yy
 nnoremap <leader>yw "+yw
 nnoremap <leader>yi "+yi
 
+nnoremap <leader>v :vs<CR>
+nnoremap <leader>V :sp<CR>
+nnoremap <leader>l :noh<CR>
+
 nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 vnoremap <leader>p "+p
 vnoremap <leader>P "+P
-
-nmap <silent> <Leader>bb :NERDTreeToggle<CR>
-nmap <silent> <Leader>bf :NERDTreeFind<CR>
-nmap <silent> <Leader>T :Term<CR>
-nmap <silent> <Leader>t :VTerm<CR>
-
 
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
@@ -173,10 +214,14 @@ map <Leader>k <Plug>(easymotion-k)
 
 nmap <silent> <Leader>en :ALENextWrap<CR>
 nmap <silent> <Leader>ep :ALEPreviousWrap<CR>
+nmap <silent> <C-l> :ALEFix<CR>
 
-nmap <silent> <leader>1 1gt
-nmap <silent> <leader>2 2gt
-nmap <silent> <leader>3 3gt
-nmap <silent> <leader>4 4gt
-nmap <silent> <leader>5 5gt
+nmap <silent> <Leader>q :bd<CR>
 
+nmap <Leader>gs :Gstatus<CR>
+
+" 简单 emacs 快捷键
+inoremap <C-A> <Home>
+inoremap <C-B> <Left>
+inoremap <C-E> <End>
+inoremap <C-F> <Right>
