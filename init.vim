@@ -121,6 +121,8 @@ let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
 let g:ale_linters = {
 \   'javascript': ['eslint', 'tsserver'],
 \}
@@ -172,10 +174,10 @@ nnoremap <Leader>ff :FZF<CR>
 nnoremap <Leader>fl :Lines<CR>
 vmap <silent> <Leader>fr y:Rg <C-r>"<CR>
 nmap <silent> <Leader>fr yiw:Rg <C-r>"<CR>
+nmap <silent> <Leader>fb :NERDTreeToggle<CR><C-w>l:NERDTreeFind<CR>
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
 
 nmap <silent> <Leader>bb :NERDTreeToggle<CR>
-nmap <silent> <Leader>bf :NERDTreeToggle<CR><C-w>l:NERDTreeFind<CR>
 nmap <silent> <Leader>bc :CloseOtherBuffers<CR>
 nmap <Leader>br :e %:h
 
