@@ -101,7 +101,7 @@ set noswapfile
 au FocusGained * :checktime
 set encoding=UTF-8
 set guifont=Hack\ Nerd\ Font\ h11
-set colorcolumn=120
+set colorcolumn=100
 " :au FocusLost * silent! wa
 
 au BufNewFile,BufRead *.art set filetype=html
@@ -122,6 +122,8 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
 
 let g:ale_linters = {
 \   'javascript': ['eslint', 'tsserver'],
