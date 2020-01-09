@@ -8,6 +8,7 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
+Plug 'chriskempson/base16-vim'
 
 " language
 Plug 'dag/vim-fish'
@@ -28,6 +29,8 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'sebastianmarkow/deoplete-rust'
 Plug 'vim-scripts/indentpython.vim'
+
+Plug 'derekwyatt/vim-scala'
 
 " Plug 'kamykn/spelunker.vim'
 
@@ -77,7 +80,8 @@ Plug 'tpope/vim-unimpaired'
 
 call plug#end()
 
-color dracula
+color base16-dracula
+" color base16-solarized-light
 
 set termguicolors
 set nu
@@ -180,7 +184,7 @@ nmap <silent> <Leader>fb :NERDTreeToggle<CR><C-w>l:NERDTreeFind<CR>
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
 
 nmap <silent> <Leader>bb :NERDTreeToggle<CR>
-nmap <silent> <Leader>bc :CloseOtherBuffers<CR>
+nmap <silent> <Leader>bc :Bdelete other<CR>
 nmap <Leader>br :e %:h
 
 nmap <Leader>/ :TComment<CR>
