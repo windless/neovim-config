@@ -8,7 +8,6 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
-Plug 'chriskempson/base16-vim'
 
 " language
 Plug 'dag/vim-fish'
@@ -32,9 +31,15 @@ Plug 'vim-scripts/indentpython.vim'
 
 Plug 'derekwyatt/vim-scala'
 
-" Plug 'kamykn/spelunker.vim'
 
 " 功能
+
+" org-mode
+Plug 'jceb/vim-orgmode'
+
+" 单词拼写
+" Plug 'kamykn/spelunker.vim'
+
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
 Plug 'andrep/vimacs'
@@ -80,9 +85,11 @@ Plug 'tpope/vim-unimpaired'
 
 call plug#end()
 
-color base16-dracula
+color dracula
+" color base16-dracula
 " color base16-solarized-light
 
+set nospell
 set termguicolors
 set nu
 set expandtab
@@ -104,7 +111,7 @@ set foldlevelstart=99
 set noswapfile
 au FocusGained * :checktime
 set encoding=UTF-8
-set guifont=Hack\ Nerd\ Font\ h11
+" set guifont=Hack\ Nerd\ Font\ h11
 set colorcolumn=100
 " :au FocusLost * silent! wa
 
@@ -113,12 +120,20 @@ au BufNewFile,BufRead *.css.art set filetype=css
 au BufNewFile,BufRead .eslintrc set filetype=json
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 
+let g:coc_node_path='~/.nvm/versions/node/v14.5.0/bin/node'
+let g:node_host_prog='~/.nvm/versions/node/v14.5.0/lib/node_modules/neovim/bin/cli.js'
+
 let mapleader=" "
 
 set runtimepath+=~/.vim
 
+let g:enable_spelunker_vim = 1
+
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
+call deoplete#custom#option({
+\ 'auto_complete_delay': 20,
+\ 'smart_case': v:true,
+\ })
 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let g:NERDTreeDirArrowExpandable = '▸'
@@ -128,16 +143,22 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
 
 let g:ale_linters = {
-\   'javascript': ['eslint', 'tsserver'],
+\ 'javascript': ['eslint', 'tsserver'],
+\ 'typescript': ['eslint', 'tsserver'],
 \}
 let g:ale_fixers = {
-  \'javascript': [
-    \'eslint',
-  \],
+\ 'javascript': ['eslint'],
+\ 'typescript': ['eslint'],
 \}
+let g:ale_typescript_prettier_use_local_config = 1
 let g:ale_sign_column_always = 1
+let g:ale_linters_explicit = 1
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠️'
+
 nnoremap <silent> <C-]> :ALEGoToDefinition<CR>
 
 let g:user_emmet_leader_key='<C-E>'
@@ -173,13 +194,31 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:session_autosave='no'
 let g:session_autoload='no'
 
+" fzf config
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -F -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+" end fzf config
+
 nmap <silent> <Leader>T :Term<CR>
 nmap <silent> <Leader>t :VTerm<CR>
 
 nnoremap <Leader>ff :FZF<CR>
 nnoremap <Leader>fl :Lines<CR>
-vmap <silent> <Leader>fr y:Rg <C-r>"<CR>
-nmap <silent> <Leader>fr yiw:Rg <C-r>"<CR>
+vmap <silent> <Leader>fr y:RG <C-r>"<CR>
+nmap <silent> <Leader>fr yiw:RG <C-r>"<CR>
 nmap <silent> <Leader>fb :NERDTreeToggle<CR><C-w>l:NERDTreeFind<CR>
 let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
 
@@ -220,9 +259,8 @@ let g:EasyMotion_smartcase = 1
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
-nmap <silent> <Leader>en :ALENextWrap<CR>
-nmap <silent> <Leader>ep :ALEPreviousWrap<CR>
-nmap <silent> <C-l> :ALEFix<CR>
+nmap <silent> <C-n> :ALENextWrap<CR>
+nmap <silent> <C-m> :ALEPreviousWrap<CR>
 
 nmap <silent> <Leader>q :bd<CR>
 
@@ -233,3 +271,17 @@ inoremap <C-A> <Home>
 inoremap <C-B> <Left>
 inoremap <C-E> <End>
 inoremap <C-F> <Right>
+cnoremap <C-A> <Home>
+cnoremap <C-B> <Left>
+cnoremap <C-E> <End>
+cnoremap <C-F> <Right>
+
+" buffer 切换
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
